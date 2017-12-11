@@ -4,7 +4,7 @@
 import json
 
 ## OBJECTS: input cluster file and adjacency list 
-o = open ("meta2.json", "w")
+o = open ("meta.json", "w")
 y = open ("results_flickr_10_2017.csv", "r")
 x = open ("mcl_flickr_10_2017.txt", "r")
 clusters_list = []
@@ -78,14 +78,23 @@ for i in range(0, len(clusters_list)):
     elements = clusters_list[i].split('\t')
     allmatches = []
 
+    max_num_for_cluster = 0
+    representative = ""
     for elem in elements:
+        icm_num = 0
         matches = getmatchescluster(elem)
         for match in matches:
+            if match == i:
+                icm_num = icm_num + 1
             allmatches.append(match)
+        if icm_num > max_num_for_cluster:
+            max_num_for_cluster = icm_num
+            representative = elem
 
     for match in allmatches:
         if match != i:
             TARGETS.append(match)
+
 
     targets = set(TARGETS)
 
@@ -99,6 +108,7 @@ for i in range(0, len(clusters_list)):
     node["name"] = i
     node["id"] = i
     node["value"] = len(elements)
+    node["representative"] = representative
     nodes.append(node.copy())
 
 

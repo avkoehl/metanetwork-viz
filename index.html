@@ -12,6 +12,10 @@
 	stroke-width: 1.5px;
 }
 
+img {
+  border-radius: 50%;
+}
+
 </style>
 <svg width="1800" height="900"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -33,10 +37,10 @@ var zoom_handler = d3.zoom()
 
 var simulation = d3.forceSimulation()
 	.force("link", d3.forceLink().id(function(d) { return d.id; }))
-	.force("charge", d3.forceManyBody())
+	.force("charge", d3.forceManyBody().strength(-100))
 	.force("center", d3.forceCenter(width / 2, height / 2));
 
-	d3.json("meta.json", function(error, graph) {
+	d3.json("./data/meta.json", function(error, graph) {
 		if (error) throw error;
 
 
@@ -52,8 +56,9 @@ var simulation = d3.forceSimulation()
 			.selectAll("circle")
 			.data(graph.nodes)
 			.enter().append("circle")
-			.attr("r", 5)
-			.attr("fill", function(d) { return color(d.group); })
+      .attr("r", function(d) { return  d.value * 2 ; })
+      .attr("fill", function(d) { return color(d.id); })
+      .on("click", function(d) {alert ("you clicked on node" + d.id + " value " + d.value + " representative: " + d.representative);})
 			.call(d3.drag()
 					.on("start", dragstarted)
 					.on("drag", dragged)

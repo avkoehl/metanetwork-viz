@@ -14,10 +14,10 @@ var zoom_handler = d3.zoom()
 
 var simulation = d3.forceSimulation()
   .force("link", d3.forceLink().id(function(d) { return d.id; }))
-  .force("charge", d3.forceManyBody())
+  .force("charge", d3.forceManyBody().strength(-250))
   .force("center", d3.forceCenter(width / 2, height / 2));
 
-  d3.json("meta2.json", function(error, graph) {
+  d3.json("./data/meta.json", function(error, graph) {
     if (error) throw error;
 
 
@@ -32,18 +32,21 @@ var simulation = d3.forceSimulation()
       .attr("class", "nodes")
       .selectAll("circle")
       .data(graph.nodes)
-      .enter().append("circle")
-      //.attr("r", 10)
-      .attr("r", function(d) { return  d.value * 2 ; })
-      .attr("fill", function(d) { return color(d.id); })
-      .on("click", function(d) {alert ("you clicked on node" + d.id + " value " + d.value);})
+      .enter().append("image")
+      //.attr("r", function(d) { return  d.value * 2 ; })
+      //.attr("fill", function(d) { return color(d.id); })
+      .attr("xlink:href", function(d) { return "./images/" + d.representative; })
+      .attr("width", function (d) { return d.value * 6 })
+     // .attr("height", function (d) { return 10 })
+      .on("click", function(d) {alert ("you clicked on node" + d.id + " value " + d.value + " representative: " + d.representative);})
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
-
+    
     node.append("title")
       .text(function(d) { return d.id; });
+    
 
     simulation
       .nodes(graph.nodes)
@@ -54,14 +57,15 @@ var simulation = d3.forceSimulation()
 
     function ticked() {
       link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+        .attr("x1", function(d) { return d.source.x + d.source.value * 3; })
+        .attr("y1", function(d) { return d.source.y + 5; })
+        .attr("x2", function(d) { return d.target.x + d.target.value * 3; })
+        .attr("y2", function(d) { return d.target.y + 5 ; });
 
       node
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+        //.attr("cx", function(d) { return d.x; })
+        //.attr("cy", function(d) { return d.y; });
+       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     }
 
   });
