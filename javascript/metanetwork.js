@@ -1,6 +1,6 @@
-var svg = d3.select("#metanetwork"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+var svg = d3.select("#metanetwork").append("svg")
+    .attr("width", 900)
+    .attr("height", 500);
 
 var g = svg.append("g")
 .attr("class", "everything");
@@ -15,7 +15,7 @@ var zoom_handler = d3.zoom()
 var simulation = d3.forceSimulation()
   .force("link", d3.forceLink().id(function(d) { return d.id; }))
   .force("charge", d3.forceManyBody().strength(-250))
-  .force("center", d3.forceCenter(width / 2, height / 2));
+  .force("center", d3.forceCenter(900 / 2, 500 / 2));
 
   d3.json("./data/meta.json", function(error, graph) {
     if (error) throw error;
@@ -38,7 +38,7 @@ var simulation = d3.forceSimulation()
       .attr("xlink:href", function(d) { return "./images/" + d.representative; })
       .attr("width", function (d) { return d.value * 6 })
      // .attr("height", function (d) { return 10 })
-      .on("click", function(d) {alert ("you clicked on node" + d.id + " value " + d.value + " representative: " + d.representative);})
+      .on("click", function(d) {document.getElementById("cid").innerHTML = d.id; clearWindow();  loadCluster();})
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
